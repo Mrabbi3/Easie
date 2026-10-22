@@ -153,14 +153,6 @@ p { margin: 0; }
 
 /* The radial popup */
 .radial { position: absolute; z-index: 30; pointer-events: none; transform-origin: center; }
-.radial .disc {
-  position: absolute; inset: 14px; border-radius: 50%;
-  background: color-mix(in srgb, var(--surface) 72%, transparent);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--line); box-shadow: var(--shadow);
-  transform: scale(.4); opacity: 0; transition: transform .34s cubic-bezier(.3, 1.35, .5, 1), opacity .2s;
-}
-.radial.open .disc { transform: scale(1); opacity: 1; }
 .radial svg.spokes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .spokes line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; stroke-linecap: round; opacity: 0; transition: opacity .3s; }
 .radial.open .spokes line { opacity: .5; }
@@ -620,7 +612,7 @@ footer { padding-block: 28px 40px; color: var(--muted); font-size: 0.85rem; disp
       spokes += `<line data-t="${t}" style="--tint:${F[t][2]};transition-delay:${80 + k * 20}ms" x1="${c + cos * 62}" y1="${c + sin * 62}" x2="${c + cos * (r - 34)}" y2="${c + sin * (r - 34)}"/>`;
       bubbles += `<button type="button" class="bubble" data-t="${t}" style="--x:${(cos * r).toFixed(1)}px;--y:${(sin * r).toFixed(1)}px;--d:${k * 25}ms" aria-label="Convert to ${F[t][0]}, ${F[t][1]}">${glyph(t)}</button>`;
     });
-    radial.innerHTML = `<div class="disc"></div><svg class="spokes" viewBox="0 0 ${size} ${size}" aria-hidden="true">${spokes}</svg>${bubbles}<div class="center" id="center"></div>`;
+    radial.innerHTML = `<svg class="spokes" viewBox="0 0 ${size} ${size}" aria-hidden="true">${spokes}</svg>${bubbles}<div class="center" id="center"></div>`;
     stage.appendChild(radial);
     const center = radial.querySelector(".center");
     const idle = () => { center.innerHTML = `${glyph(f.ext)}<strong>${esc(f.name)}.${f.ext}</strong>`; };

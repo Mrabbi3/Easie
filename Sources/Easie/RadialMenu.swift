@@ -122,16 +122,6 @@ struct RadialMenu: View {
                 .contentShape(Rectangle())
                 .onTapGesture(perform: close)
 
-            // A soft glassy disc behind everything.
-            Circle()
-                .fill(.ultraThinMaterial)
-                .overlay(Circle().strokeBorder(Color.white.opacity(0.35), lineWidth: 1))
-                .frame(width: (radius + 46) * 2, height: (radius + 46) * 2)
-                .shadow(color: .black.opacity(0.25), radius: 18, y: 8)
-                .scaleEffect(open ? 1 : 0.4)
-                .opacity(open ? 1 : 0)
-                .animation(.spring(response: 0.34, dampingFraction: 0.8), value: open)
-
             ForEach(Array(session.targets.enumerated()), id: \.element) { index, format in
                 spoke(for: format, index: index)
             }
@@ -173,6 +163,7 @@ struct RadialMenu: View {
                 style: StrokeStyle(lineWidth: highlighted ? 2.5 : 1.5, lineCap: .round, dash: highlighted ? [] : [4, 5]))
         .animation(.easeOut(duration: 0.3).delay(0.08 + Double(index) * 0.02), value: open)
         .animation(.easeOut(duration: 0.15), value: highlighted)
+        .shadow(color: .black.opacity(0.35), radius: 1)  // keeps the lines readable on any desktop
         .allowsHitTesting(false)
     }
 
