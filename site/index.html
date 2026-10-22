@@ -1,0 +1,752 @@
+<title>Easie for Mac</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Easie converts Word, PDF, Excel, PowerPoint, Pages, Keynote, images and data files from Finder's right-click menu. Free, offline, no ads.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a Mac desktop as the hero — copy on the left, a live Finder window you can right-click on the right —
+   then calm single-column sections. The only colour bursts are the file-format bands, as in the app. */
+:root {
+  --bg: #F1F2F5;
+  --surface: #FFFFFF;
+  --sunken: #E7E9EE;
+  --ink: #15171C;
+  --muted: #5A5F6B;
+  --line: #D9DCE3;
+  --accent: #0A8C87;
+  --accent-ink: #FFFFFF;
+  --button: #15171C;
+  --button-ink: #FFFFFF;
+  --menu: rgba(247, 247, 249, 0.86);
+  --select: #0A63D9;
+  --shadow: 0 1px 2px rgba(20, 22, 30, .06), 0 12px 32px rgba(20, 22, 30, .10);
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Instrument Sans", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101115; --surface: #1A1C21; --sunken: #23262C; --ink: #ECEDF0; --muted: #A1A6B1; --line: #2E3138;
+    --accent: #2EC4BD; --accent-ink: #061615; --button: #ECEDF0; --button-ink: #101115;
+    --menu: rgba(44, 46, 52, 0.88); --select: #2F7FF0;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px rgba(0, 0, 0, .45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101115; --surface: #1A1C21; --sunken: #23262C; --ink: #ECEDF0; --muted: #A1A6B1; --line: #2E3138;
+  --accent: #2EC4BD; --accent-ink: #061615; --button: #ECEDF0; --button-ink: #101115;
+  --menu: rgba(44, 46, 52, 0.88); --select: #2F7FF0;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px rgba(0, 0, 0, .45);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+p { margin: 0; }
+.mono { font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); }
+
+/* Header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; }
+.brand svg { width: 34px; height: 34px; flex: none; }
+.nav { display: flex; align-items: center; gap: 22px; font-size: 0.95rem; }
+.nav a { text-decoration: none; color: var(--muted); }
+.nav a:hover { color: var(--ink); }
+@media (max-width: 720px) { .nav .hide-sm { display: none; } }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer;
+  font: 600 1rem/1 var(--font-body); padding: 14px 20px; border-radius: 12px; border: 1px solid transparent;
+  background: var(--button); color: var(--button-ink); transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn.small { padding: 9px 14px; font-size: 0.9rem; border-radius: 10px; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 56px; align-items: center; padding-block: 28px 72px; }
+.hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.hero h1 { font-size: clamp(2.6rem, 6vw, 4.4rem); font-weight: 800; }
+.hero h1 span { color: var(--accent); }
+.hero .lede { font-size: 1.15rem; color: var(--muted); max-width: 34rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; color: var(--muted); }
+.facts span { padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; white-space: nowrap; }
+@media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); gap: 36px; } }
+
+/* Fake Finder window */
+.finder { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); position: relative; min-width: 0; }
+.finder-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--sunken); border-radius: 14px 14px 0 0; }
+.lights { display: flex; gap: 7px; }
+.lights i { width: 12px; height: 12px; border-radius: 50%; background: #FF5F57; display: block; }
+.lights i:nth-child(2) { background: #FEBC2E; }
+.lights i:nth-child(3) { background: #28C840; }
+.finder-title { font-weight: 600; font-size: 0.9rem; }
+.finder-reset { justify-self: end; background: none; border: 0; color: var(--muted); font: 500 0.8rem var(--font-body); cursor: pointer; padding: 2px 4px; }
+.finder-reset:hover { color: var(--ink); }
+.finder-body { display: grid; grid-template-columns: 150px minmax(0, 1fr); min-height: 400px; }
+.sidebar { border-right: 1px solid var(--line); padding: 14px 10px; display: flex; flex-direction: column; gap: 2px; font-size: 0.85rem; color: var(--muted); }
+.sidebar b { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 8px; }
+.sidebar span { padding: 5px 8px; border-radius: 6px; }
+.sidebar span.on { background: var(--sunken); color: var(--ink); font-weight: 500; }
+@media (max-width: 560px) { .finder-body { grid-template-columns: minmax(0, 1fr); } .sidebar { display: none; } }
+.stage { position: relative; padding: 18px; min-width: 0; }
+.files { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px 6px; }
+.file {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 4px 8px; border-radius: 10px;
+  background: none; border: 0; color: var(--ink); cursor: default; font: inherit; position: relative;
+}
+.file .fglyph { --gw: 52px; }
+.file .fname { font-size: 0.78rem; line-height: 1.25; text-align: center; padding: 2px 6px; border-radius: 5px; word-break: break-word; }
+.file.selected .fname { background: var(--select); color: #fff; }
+.file.selected .fglyph { filter: drop-shadow(0 0 0 transparent) brightness(.92); }
+.file.fresh { animation: arrive .6s cubic-bezier(.34, 1.56, .64, 1); }
+.file.fresh::after { content: ""; position: absolute; inset: 0; border-radius: 10px; box-shadow: 0 0 0 2px var(--accent); animation: ring 1.8s ease-out forwards; }
+@keyframes arrive { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes ring { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
+.hint {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); font-size: 0.82rem; font-weight: 500;
+  padding: 8px 14px; border-radius: 999px; white-space: nowrap; max-width: calc(100% - 24px);
+  overflow: hidden; text-overflow: ellipsis; box-shadow: var(--shadow); transition: opacity .2s;
+}
+.pulse::before {
+  content: ""; position: absolute; top: 10px; left: 50%; width: 52px; height: 64px; margin-left: -26px; border-radius: 10px;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); animation: pulse 1.8s infinite;
+}
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 100% { box-shadow: 0 0 0 16px transparent; } }
+
+/* Context menu */
+.menu {
+  position: absolute; z-index: 20; min-width: 220px; padding: 5px; border-radius: 10px;
+  background: var(--menu); backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 0.86rem;
+  animation: menu-in .12s ease-out;
+}
+@keyframes menu-in { from { opacity: 0; transform: scale(.97); } }
+.menu button {
+  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: none; border: 0;
+  color: var(--ink); font: inherit; padding: 5px 10px; border-radius: 6px; cursor: default;
+}
+.menu button:hover, .menu button:focus-visible { background: var(--select); color: #fff; outline: none; }
+.menu hr { border: 0; border-top: 1px solid var(--line); margin: 5px 8px; }
+.menu .easie { font-weight: 600; }
+.menu .easie svg { width: 16px; height: 16px; }
+.menu .chev { margin-left: auto; opacity: .6; }
+
+/* The radial popup */
+.radial { position: absolute; z-index: 30; pointer-events: none; transform-origin: center; }
+.radial .disc {
+  position: absolute; inset: 14px; border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line); box-shadow: var(--shadow);
+  transform: scale(.4); opacity: 0; transition: transform .34s cubic-bezier(.3, 1.35, .5, 1), opacity .2s;
+}
+.radial.open .disc { transform: scale(1); opacity: 1; }
+.radial svg.spokes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.spokes line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; stroke-linecap: round; opacity: 0; transition: opacity .3s; }
+.radial.open .spokes line { opacity: .5; }
+.radial .spokes line.hot { stroke: var(--tint); stroke-dasharray: none; stroke-width: 2.5; opacity: 1; }
+.bubble {
+  position: absolute; left: 50%; top: 50%; width: 46px; height: 56px; margin: -28px 0 0 -23px; padding: 0;
+  background: none; border: 0; cursor: pointer; pointer-events: auto; border-radius: 6px;
+  transform: translate(0, 0) scale(.2); opacity: 0;
+  transition: transform .45s cubic-bezier(.34, 1.56, .64, 1) var(--d, 0ms), opacity .22s var(--d, 0ms);
+}
+.radial.open .bubble { transform: translate(var(--x), var(--y)) scale(1); opacity: 1; }
+.radial.open .bubble:hover, .radial.open .bubble:focus-visible { transform: translate(var(--x), var(--y)) scale(1.17); transition-delay: 0ms; }
+.radial.busy .bubble { pointer-events: none; }
+.radial.busy .bubble:not(.chosen) { opacity: .22; transform: translate(var(--x), var(--y)) scale(.85); transition-delay: 0ms; }
+.radial.busy .bubble.chosen { transform: translate(var(--x), var(--y)) scale(1.2); transition-delay: 0ms; }
+.center {
+  position: absolute; left: 50%; top: 50%; width: 116px; height: 116px; margin: -58px 0 0 -58px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 12px;
+  text-align: center; font-size: 0.72rem; line-height: 1.25; pointer-events: auto;
+  transform: scale(.5); opacity: 0; transition: transform .32s cubic-bezier(.3, 1.4, .5, 1), opacity .2s;
+}
+.radial.open .center { transform: scale(1); opacity: 1; }
+.center .fglyph { --gw: 32px; }
+.center strong { font-weight: 600; }
+.center small { color: var(--muted); font-size: 0.68rem; }
+.spinner { width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent); animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.tick { width: 30px; height: 30px; border-radius: 50%; background: #28B44B; display: grid; place-items: center; animation: arrive .4s cubic-bezier(.34, 1.56, .64, 1); }
+.tick svg { width: 16px; height: 16px; }
+
+/* File-format glyph (same design as the app's icons) */
+.fglyph { --gw: 46px; position: relative; width: var(--gw); height: calc(var(--gw) * 1.22); display: block; flex: none; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .25)); }
+.fglyph .page { position: absolute; inset: 0; background: #FFFFFF; border-radius: calc(var(--gw) * .1); clip-path: polygon(0 0, 70% 0, 100% 24.6%, 100% 100%, 0 100%); }
+.fglyph .page::after { content: ""; position: absolute; top: 0; right: 0; width: 30%; height: 24.6%; background: linear-gradient(225deg, #F3F3F5 50%, #D2D3D8 50%); }
+.fglyph .sym { position: absolute; left: 50%; top: 16%; width: 38%; height: 38%; transform: translateX(-50%); color: var(--tint); }
+.fglyph .band {
+  position: absolute; left: -8%; bottom: 10%; width: 92%; height: 27%; border-radius: 3px;
+  background: linear-gradient(var(--tint), color-mix(in srgb, var(--tint) 82%, #000));
+  color: #FFFFFF; font: 800 calc(var(--gw) * .22) / 1 var(--font-display); letter-spacing: .02em;
+  display: grid; place-items: center; overflow: hidden; white-space: nowrap;
+}
+.fglyph .band.long { font-size: calc(var(--gw) * .16); }
+
+/* Sections */
+section { padding-block: 72px; border-top: 1px solid var(--line); }
+.section-head { display: flex; flex-direction: column; gap: 12px; max-width: 42rem; margin-bottom: 40px; }
+.section-head h2 { font-size: clamp(2rem, 4.2vw, 3rem); font-weight: 800; }
+.section-head p { color: var(--muted); font-size: 1.08rem; }
+
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; list-style: none; padding: 0; margin: 0; counter-reset: step; }
+.steps li { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.steps li::before {
+  counter-increment: step; content: counter(step); font: 800 1.1rem/1 var(--font-display);
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--bg);
+}
+.steps h3 { font-size: 1.3rem; }
+.steps p { color: var(--muted); }
+.steps kbd { font-family: var(--font-mono); font-size: 0.78rem; background: var(--sunken); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; color: var(--ink); white-space: nowrap; }
+@media (max-width: 860px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
+/* Format explorer */
+.explorer { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 28px; align-items: start; }
+@media (max-width: 860px) { .explorer { grid-template-columns: minmax(0, 1fr); } }
+.sources { display: flex; flex-direction: column; gap: 18px; }
+.source-group b { display: block; font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 7px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 0.9rem var(--font-body);
+}
+.chip i { width: 10px; height: 10px; border-radius: 50%; background: var(--tint); display: block; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.result { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.result h3 { font-size: 1.5rem; }
+.result h3 span { color: var(--muted); font-weight: 600; }
+.outputs { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 14px 8px; }
+.out { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 0.75rem; color: var(--muted); animation: arrive .35s cubic-bezier(.34, 1.56, .64, 1) backwards; }
+.out .fglyph { --gw: 40px; }
+.out sup { color: var(--accent); }
+.note { font-size: 0.88rem; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; }
+
+/* Privacy */
+.promises { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.promise { background: var(--surface); padding: 24px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.promise .figure { font: 800 2.2rem/1 var(--font-display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.promise h3 { font-size: 1.1rem; font-family: var(--font-body); font-weight: 600; letter-spacing: 0; }
+.promise p { color: var(--muted); font-size: 0.95rem; }
+
+/* FAQ */
+.faq { display: flex; flex-direction: column; max-width: 46rem; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; list-style: none; padding: 18px 36px 18px 0; position: relative; font-weight: 600; font-size: 1.05rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 4px; top: 14px; font: 400 1.5rem var(--font-body); color: var(--muted); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq .answer { padding: 0 0 20px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; max-width: 40rem; }
+.faq .answer strong { color: var(--ink); font-weight: 600; }
+
+/* Download footer */
+.download { padding-block: 80px; border-top: 1px solid var(--line); }
+.download-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: var(--shadow); }
+.download-card svg.big { width: 84px; height: 84px; }
+.download-card h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); font-weight: 800; }
+.download-card p { color: var(--muted); }
+.checksum { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.checksum code { font-family: var(--font-mono); font-size: 0.72rem; background: var(--sunken); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; overflow-x: auto; max-width: 100%; white-space: nowrap; user-select: all; }
+.copy { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 6px; padding: 5px 10px; font: 500 0.78rem var(--font-body); cursor: pointer; }
+@media (max-width: 760px) { .download-card { grid-template-columns: minmax(0, 1fr); text-align: left; } }
+footer { padding-block: 28px 40px; color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; transition-delay: 0ms !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="easie-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6B54FA"/><stop offset="1" stop-color="#1AC2D9"/>
+    </linearGradient>
+    <symbol id="easie-logo" viewBox="0 0 64 64">
+      <rect x="3" y="3" width="58" height="58" rx="14" fill="url(#easie-grad)"/>
+      <rect x="13" y="17" width="22" height="28" rx="3.5" fill="#FFFFFF" fill-opacity=".45" transform="rotate(9 24 31)"/>
+      <rect x="23" y="13" width="24" height="31" rx="3.5" fill="#FFFFFF" transform="rotate(-4 35 28)"/>
+      <path d="M28 20.5h13M28 25.5h15M28 30.5h11" stroke="#6B54FA" stroke-opacity=".35" stroke-width="2.6" stroke-linecap="round" transform="rotate(-4 35 28)"/>
+      <circle cx="44.5" cy="44.5" r="11" fill="#FFFFFF"/>
+      <circle cx="44.5" cy="44.5" r="8.6" fill="url(#easie-grad)"/>
+      <path d="M40.6 43.2a4.2 4.2 0 0 1 7.3-1.6M48.4 45.8a4.2 4.2 0 0 1-7.3 1.6" stroke="#FFFFFF" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+      <path d="M48.3 39.6v2.6h-2.6M40.7 49.4v-2.6h2.6" stroke="#FFFFFF" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.2 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Easie home"><svg aria-hidden="true"><use href="#easie-logo"/></svg>Easie</a>
+    <nav class="nav" aria-label="Sections">
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#formats">Formats</a>
+      <a class="hide-sm" href="#privacy">Privacy</a>
+      <a class="hide-sm" href="#faq">Help</a>
+      <a class="btn small download-link" href="#download-final"><svg aria-hidden="true"><use href="#i-download"/></svg>Download</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Free file converter for Mac</p>
+        <h1>Right-click.<br>Pick a format.<br><span>Done.</span></h1>
+        <p class="lede">Easie turns Word, PDF, Excel, PowerPoint, Pages, Keynote, image and data files into the format you need, straight from Finder. It all happens on your Mac: no uploads, no account, no ads, no cost.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://github.com/Mrabbi3/Easie/releases/latest/download/Easie.dmg"><svg aria-hidden="true"><use href="#i-apple"/></svg>Download for Mac</a>
+          <a class="btn ghost" href="#how">How it works</a>
+        </div>
+        <p class="facts mono"><span>v0.1.0</span><span>2.0 MB</span><span>macOS 13+</span><span>Apple Silicon &amp; Intel</span></p>
+      </div>
+
+      <div class="finder" aria-label="Interactive demo: a Finder window you can right-click">
+        <div class="finder-bar">
+          <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="finder-title">Documents</div>
+          <button class="finder-reset" id="reset-demo" type="button">Reset demo</button>
+        </div>
+        <div class="finder-body">
+          <div class="sidebar" aria-hidden="true">
+            <b>Favorites</b>
+            <span>Desktop</span>
+            <span class="on">Documents</span>
+            <span>Downloads</span>
+            <span>Pictures</span>
+          </div>
+          <div class="stage" id="stage">
+            <div class="files" id="files" role="list"></div>
+            <div class="hint" id="hint" aria-hidden="true">Right-click a file to try Easie</div>
+          </div>
+        </div>
+        <p class="visually-hidden" id="live" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <section id="how" aria-labelledby="how-title">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">Set up once. Then it’s one click.</h2>
+        <p>There’s no app to open each time and nothing to drag in. Easie waits in the background and appears where you already work: Finder’s right-click menu.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <h3>Install Easie</h3>
+          <p>Open <span class="mono">Easie.dmg</span>, drag Easie into Applications, and open it once. macOS asks you to confirm the first time: go to <kbd>System Settings</kbd> → <kbd>Privacy &amp; Security</kbd> → <kbd>Open Anyway</kbd>.</p>
+        </li>
+        <li>
+          <h3>Right-click any file</h3>
+          <p>In Finder, right-click (or <kbd>Control</kbd>-click) a file, or several, and choose <strong>Edit with Easie</strong>. The formats it can become pop out around it.</p>
+        </li>
+        <li>
+          <h3>Click the format</h3>
+          <p>The new file appears next to the original, with the same name. Your original is never changed, and an existing file is never replaced.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="formats" aria-labelledby="formats-title">
+      <div class="section-head">
+        <p class="eyebrow">Formats</p>
+        <h2 id="formats-title">23 formats in. The right one out.</h2>
+        <p>Pick what you have to see what Easie can turn it into. This is the same list the app uses.</p>
+      </div>
+      <div class="explorer">
+        <div class="sources" id="sources"></div>
+        <div class="result" aria-live="polite">
+          <h3 id="result-title"></h3>
+          <div class="outputs" id="outputs"></div>
+          <p class="note" id="result-note"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" aria-labelledby="privacy-title">
+      <div class="section-head">
+        <p class="eyebrow">Privacy &amp; safety</p>
+        <h2 id="privacy-title">Your files stay on your Mac.</h2>
+        <p>Easie uses the converters already built into macOS. There’s no server, no account and nothing to upload, and every release is tested against booby-trapped files.</p>
+      </div>
+      <div class="promises">
+        <div class="promise">
+          <span class="figure">0</span>
+          <h3>Network requests</h3>
+          <p>Easie never goes online. In testing, a web page packed with trackers and remote images made zero requests while it was converted.</p>
+        </div>
+        <div class="promise">
+          <span class="figure">(1)</span>
+          <h3>Nothing overwritten</h3>
+          <p>Every conversion writes a new file. If the name is taken, Easie adds a number instead of replacing what’s there.</p>
+        </div>
+        <div class="promise">
+          <span class="figure">29 MB</span>
+          <h3>Safe with strange files</h3>
+          <p>A “zip bomb” hiding 600 MB inside a fake PowerPoint is refused, using 29 MB of memory instead of freezing your Mac.</p>
+        </div>
+        <div class="promise">
+          <span class="figure">0.2 s</span>
+          <h3>Quick to appear</h3>
+          <p>After the first use, the popup opens in about a fifth of a second. The whole app is a 2 MB download.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="section-head">
+        <p class="eyebrow">Help</p>
+        <h2 id="faq-title">Questions people ask</h2>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>macOS says Easie can’t be opened. What do I do?</summary>
+          <div class="answer">
+            <p>That message appears for apps from outside the App Store that haven’t been notarized by Apple yet. You only need to approve Easie once:</p>
+            <p><strong>1.</strong> Open System Settings → Privacy &amp; Security.<br><strong>2.</strong> Scroll down to the message about Easie and click <strong>Open Anyway</strong>.<br><strong>3.</strong> Confirm with your password or Touch ID.</p>
+          </div>
+        </details>
+        <details>
+          <summary>I don’t see “Edit with Easie” when I right-click.</summary>
+          <div class="answer">
+            <p>Open Easie from Applications and check that the <strong>Right-click menu</strong> switch is on. If you have many Finder extensions, macOS moves the item into <strong>Quick Actions</strong> or <strong>Services</strong> at the bottom of the menu.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Why did Pages, Keynote or Numbers open for a moment?</summary>
+          <div class="answer">
+            <p>Apple keeps the Pages, Keynote and Numbers formats private, so only Apple’s apps can read them. Easie asks the app to export the file, then closes it again. macOS asks once whether Easie may do this. Those apps are free on the Mac App Store; everything else works without them.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Is it really free?</summary>
+          <div class="answer"><p>Yes. No trial, no ads, no paid tier and no sign-up.</p></div>
+        </details>
+        <details>
+          <summary>Which Macs does it run on?</summary>
+          <div class="answer"><p>Any Mac with macOS 13 Ventura or newer, with Apple Silicon or Intel.</p></div>
+        </details>
+        <details>
+          <summary>Can I turn it off, or remove it?</summary>
+          <div class="answer">
+            <p>To hide it from the right-click menu, open Easie and switch <strong>Right-click menu</strong> off. To remove it completely, click <strong>Quit Easie</strong> in that window and drag Easie from Applications to the Trash.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <div class="download" id="download-final">
+    <div class="download-card">
+      <svg class="big" aria-hidden="true"><use href="#easie-logo"/></svg>
+      <div>
+        <h2>Get Easie for Mac</h2>
+        <p>Version 0.1.0 · 2.0 MB disk image · macOS 13 or later · Apple Silicon &amp; Intel</p>
+        <div class="checksum">
+          <span class="mono">SHA-256</span>
+          <code id="sha">9d2323d00e8e9cf61a428918dcb487e74466a8c20654c859bcf9aa650ddecb7b</code>
+          <button class="copy" id="copy-sha" type="button">Copy</button>
+        </div>
+      </div>
+      <a class="btn" id="download" href="https://github.com/Mrabbi3/Easie/releases/latest/download/Easie.dmg"><svg aria-hidden="true"><use href="#i-download"/></svg>Download Easie.dmg</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>Easie · Free forever · Works offline</span>
+    <span>Made for macOS</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  // ---- Format data (mirrors the app: colours, names, and what converts to what) ----
+  const F = {
+    pdf:  ["PDF", "Document", "#E32E29", "pdf"],      docx: ["DOCX", "Word", "#1A59BD", "doc"],
+    doc:  ["DOC", "Word 97", "#1A59BD", "doc"],       odt:  ["ODT", "OpenDocument", "#1F87E6", "doc"],
+    rtf:  ["RTF", "Rich Text", "#8C52CC", "doc"],     html: ["HTML", "Web page", "#E34D26", "globe"],
+    txt:  ["TXT", "Plain text", "#737880", "text"],   md:   ["MD", "Markdown", "#333840", "hash"],
+    pages:["PAGES", "Apple Pages", "#FF9400", "pen"], pptx: ["PPTX", "PowerPoint", "#D14726", "play"],
+    key:  ["KEY", "Keynote", "#0A85FF", "play"],      xlsx: ["XLSX", "Excel", "#1C7042", "table"],
+    numbers: ["NUMBERS", "Apple Numbers", "#33B34D", "table"], csv: ["CSV", "Spreadsheet", "#2E8C57", "table"],
+    tsv:  ["TSV", "Tab-separated", "#1A8C8C", "table"], json: ["JSON", "Data", "#8F45AD", "braces"],
+    png:  ["PNG", "Lossless", "#009E9E", "photo"],    jpg:  ["JPG", "Photo", "#ED9900", "photo"],
+    heic: ["HEIC", "Small photo", "#5957D6", "photo"], tiff: ["TIFF", "Print", "#66738C", "photo"],
+    gif:  ["GIF", "Simple image", "#FF2E54", "photo"], bmp:  ["BMP", "Bitmap", "#A3855E", "photo"],
+    webp: ["WEBP", "Web image", "#33ABDB", "photo"],
+  };
+  const docs = "pdf docx doc odt rtf html txt md pages json png jpg";
+  const T = {
+    pdf: "docx odt rtf html txt md json png jpg tiff heic",
+    docx: docs, doc: docs, odt: docs, rtf: docs, html: docs, txt: docs, md: docs, pages: docs,
+    pptx: "pdf key png jpg docx txt md json html rtf odt",
+    key: "pdf pptx png jpg docx txt md json html rtf",
+    xlsx: "csv tsv json numbers pdf docx html md txt",
+    numbers: "xlsx csv tsv json pdf docx html md txt",
+    csv: "xlsx tsv json numbers pdf docx html md txt", tsv: "xlsx csv json numbers pdf docx html md txt",
+    json: "xlsx csv tsv numbers pdf docx html md txt",
+    png: "jpg heic tiff gif bmp pdf txt docx json", jpg: "png heic tiff gif bmp pdf txt docx json",
+    heic: "png jpg tiff gif bmp pdf txt docx json", tiff: "png jpg heic gif bmp pdf txt docx json",
+    gif: "png jpg heic tiff bmp pdf txt docx json", bmp: "png jpg heic tiff gif pdf txt docx json",
+    webp: "png jpg heic tiff gif bmp pdf txt docx json",
+  };
+  const targetsOf = (ext) => T[ext].split(" ").filter((t) => t !== ext);
+
+  const SYM = {
+    doc: '<path d="M7 7h10M7 11h10M7 15h7"/>',
+    pdf: '<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M8 9h4M8 12.5h8M8 16h6"/>',
+    text: '<path d="M5 6h14M5 10h10M5 14h14M5 18h8"/>',
+    hash: '<path d="M9 4 7 20M17 4l-2 16M4.5 9h15M4 15h15"/>',
+    globe: '<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.6 2.5 13.4 0 16M12 4c-2.5 2.6-2.5 13.4 0 16"/>',
+    pen: '<path d="M5 19 16.5 7.5a2.1 2.1 0 0 0-3-3L2 16v3h3zM4 21h16"/>',
+    play: '<rect x="3.5" y="5" width="17" height="12" rx="2"/><path d="m10 8.5 4.5 2.5-4.5 2.5z" fill="currentColor"/>',
+    table: '<rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 10h16M4 14.5h16M10 5v14"/>',
+    braces: '<path d="M9 4c-2 0-2.5 1-2.5 3v2.5C6.5 11 5.5 12 4 12c1.5 0 2.5 1 2.5 2.5V17c0 2 .5 3 2.5 3M15 4c2 0 2.5 1 2.5 3v2.5c0 1.5 1 2.5 2.5 2.5-1.5 0-2.5 1-2.5 2.5V17c0 2-.5 3-2.5 3"/>',
+    photo: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4.5 3.5 3 3-2.5 4.5 4"/>',
+  };
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const glyph = (ext) => {
+    const [label, , color, sym] = F[ext];
+    return `<span class="fglyph" style="--tint:${color}" aria-hidden="true"><span class="page"></span>` +
+      `<svg class="sym" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SYM[sym]}</svg>` +
+      `<span class="band${label.length > 5 ? " long" : ""}">${label}</span></span>`;
+  };
+
+  // ---- The Finder demo ----
+  const stage = document.getElementById("stage");
+  const filesEl = document.getElementById("files");
+  const hint = document.getElementById("hint");
+  const live = document.getElementById("live");
+  const startFiles = [
+    { name: "Q3 Report", ext: "docx" }, { name: "Budget 2026", ext: "xlsx" }, { name: "Pitch Deck", ext: "pptx" },
+    { name: "Beach Day", ext: "heic" }, { name: "Invoice 0412", ext: "pdf" }, { name: "Trip Notes", ext: "md" },
+  ];
+  let files = [];
+  let selected = -1;
+  let freshIndex = -1;
+  let menu = null;
+  let radial = null;
+  let triedOnce = false;
+
+  function say(text) { hint.textContent = text; live.textContent = text; }
+
+  function render() {
+    filesEl.innerHTML = files.map((f, i) =>
+      `<button type="button" role="listitem" class="file${i === selected ? " selected" : ""}${i === freshIndex ? " fresh" : ""}${!triedOnce && i === 0 ? " pulse" : ""}" data-i="${i}" aria-label="${esc(f.name)}.${f.ext}. Press Enter for the right-click menu.">` +
+      `${glyph(f.ext)}<span class="fname">${esc(f.name)}.${f.ext}</span></button>`).join("");
+  }
+
+  function reset() {
+    closeMenu(); closeRadial(true);
+    files = startFiles.map((f) => ({ ...f }));
+    selected = -1; freshIndex = -1; triedOnce = false;
+    render();
+    say(matchMedia("(hover: none)").matches ? "Tap a file to try Easie" : "Right-click a file to try Easie");
+  }
+
+  function pointIn(clientX, clientY) {
+    const r = stage.getBoundingClientRect();
+    return { x: clientX - r.left, y: clientY - r.top };
+  }
+
+  function openMenu(i, x, y, viaKeyboard) {
+    closeMenu(); closeRadial(true);
+    selected = i; triedOnce = true; render();
+    const f = files[i];
+    menu = document.createElement("div");
+    menu.className = "menu";
+    menu.setAttribute("role", "menu");
+    menu.innerHTML =
+      ["Open", "Open With", "Get Info", `Rename`, `Compress “${esc(f.name)}.${f.ext}”`].map((t) => `<button role="menuitem" type="button" class="inert">${t}</button>`).join("") +
+      `<hr><button role="menuitem" type="button" class="inert">Copy</button><button role="menuitem" type="button" class="inert">Share…</button><hr>` +
+      `<button role="menuitem" type="button" class="easie"><svg aria-hidden="true"><use href="#easie-logo"/></svg>Edit with Easie</button>` +
+      `<button role="menuitem" type="button" class="inert">Quick Actions<span class="chev">›</span></button>`;
+    stage.appendChild(menu);
+    const sw = stage.clientWidth, sh = stage.clientHeight, mw = menu.offsetWidth, mh = menu.offsetHeight;
+    menu.style.left = Math.max(6, Math.min(x, sw - mw - 6)) + "px";
+    menu.style.top = Math.max(6, Math.min(y, sh - mh - 6)) + "px";
+    menu.querySelector(".easie").addEventListener("click", (e) => { closeMenu(); openRadial(i, x, y, e.detail === 0); });
+    menu.querySelectorAll(".inert").forEach((b) => b.addEventListener("click", () => { closeMenu(); say("In this demo, choose “Edit with Easie”."); }));
+    if (viaKeyboard) menu.querySelector(".easie").focus();
+    say("Choose “Edit with Easie”");
+  }
+
+  function closeMenu() { if (menu) { menu.remove(); menu = null; } }
+
+  function openRadial(i, x, y, viaKeyboard) {
+    const f = files[i];
+    const targets = targetsOf(f.ext);
+    const n = targets.length;
+    const r = Math.max(112, (n * 72) / (2 * Math.PI));
+    const size = Math.round((r + 60) * 2);
+    const sw = stage.clientWidth, sh = stage.clientHeight;
+    const scale = Math.min(1, (Math.min(sw, sh) - 8) / size);
+    const half = (size * scale) / 2;
+    const cx = Math.max(half + 4, Math.min(x, sw - half - 4));
+    const cy = Math.max(half + 4, Math.min(y, sh - half - 4));
+
+    radial = document.createElement("div");
+    radial.className = "radial";
+    radial.setAttribute("role", "dialog");
+    radial.setAttribute("aria-label", `Convert ${f.name}.${f.ext}`);
+    Object.assign(radial.style, { width: size + "px", height: size + "px", left: cx - size / 2 + "px", top: cy - size / 2 + "px", transform: `scale(${scale})` });
+
+    let spokes = "", bubbles = "";
+    targets.forEach((t, k) => {
+      const a = -Math.PI / 2 + (2 * Math.PI * k) / n;
+      const c = size / 2, cos = Math.cos(a), sin = Math.sin(a);
+      spokes += `<line data-t="${t}" style="--tint:${F[t][2]};transition-delay:${80 + k * 20}ms" x1="${c + cos * 62}" y1="${c + sin * 62}" x2="${c + cos * (r - 34)}" y2="${c + sin * (r - 34)}"/>`;
+      bubbles += `<button type="button" class="bubble" data-t="${t}" style="--x:${(cos * r).toFixed(1)}px;--y:${(sin * r).toFixed(1)}px;--d:${k * 25}ms" aria-label="Convert to ${F[t][0]}, ${F[t][1]}">${glyph(t)}</button>`;
+    });
+    radial.innerHTML = `<div class="disc"></div><svg class="spokes" viewBox="0 0 ${size} ${size}" aria-hidden="true">${spokes}</svg>${bubbles}<div class="center" id="center"></div>`;
+    stage.appendChild(radial);
+    const center = radial.querySelector(".center");
+    const idle = () => { center.innerHTML = `${glyph(f.ext)}<strong>${esc(f.name)}.${f.ext}</strong>`; };
+    idle();
+
+    radial.querySelectorAll(".bubble").forEach((b) => {
+      const t = b.dataset.t;
+      const line = radial.querySelector(`line[data-t="${t}"]`);
+      const show = () => {
+        if (radial?.classList.contains("busy")) return;
+        line.classList.add("hot");
+        center.innerHTML = `${glyph(t)}<strong>Convert to ${F[t][0]}</strong><small>${F[t][1]}</small>`;
+      };
+      const hide = () => { if (radial?.classList.contains("busy")) return; line.classList.remove("hot"); idle(); };
+      b.addEventListener("mouseenter", show); b.addEventListener("focus", show);
+      b.addEventListener("mouseleave", hide); b.addEventListener("blur", hide);
+      b.addEventListener("click", () => convert(i, t, b, line, center));
+    });
+
+    requestAnimationFrame(() => requestAnimationFrame(() => radial && radial.classList.add("open")));
+    if (viaKeyboard) radial.querySelector(".bubble")?.focus({ preventScroll: true });
+    say(`Pick a format for ${f.name}.${f.ext}`);
+  }
+
+  function convert(i, t, bubble, line, center) {
+    const f = files[i];
+    radial.classList.add("busy");
+    bubble.classList.add("chosen");
+    line.classList.add("hot");
+    center.innerHTML = `<span class="spinner" aria-hidden="true"></span><strong>Making ${F[t][0]}…</strong>`;
+    say(`Converting to ${F[t][0]}…`);
+    setTimeout(() => {
+      let name = f.name, n = 1;
+      while (files.some((x) => x.name === name && x.ext === t)) name = `${f.name} (${n++})`;
+      center.innerHTML = `<span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><strong>Saved</strong><small class="mono">${esc(name)}.${t}</small>`;
+      say(`Saved ${name}.${t} next to the original`);
+      setTimeout(() => {
+        closeRadial();
+        files.splice(i + 1, 0, { name, ext: t });
+        selected = i + 1; freshIndex = i + 1;
+        render();
+        say(`Saved “${name}.${t}”. Try another file.`);
+      }, 1100);
+    }, 850);
+  }
+
+  function closeRadial(instant) {
+    if (!radial) return;
+    const el = radial;
+    radial = null;
+    if (instant) { el.remove(); return; }
+    el.classList.remove("open");
+    el.querySelectorAll(".bubble").forEach((b) => b.style.setProperty("--d", "0ms"));
+    setTimeout(() => el.remove(), 380);
+  }
+
+  filesEl.addEventListener("contextmenu", (e) => {
+    const b = e.target.closest(".file");
+    if (!b) return;
+    e.preventDefault();
+    const p = pointIn(e.clientX, e.clientY);
+    openMenu(+b.dataset.i, p.x, p.y, e.detail === 0 && e.button !== 2);
+  });
+  filesEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".file");
+    if (!b) return;
+    // A plain click opens the same menu, so the demo works with a trackpad tap and on phones too.
+    const keyboard = e.detail === 0;
+    const r = b.getBoundingClientRect();
+    const p = keyboard ? pointIn(r.left + r.width / 2, r.top + r.height / 2) : pointIn(e.clientX, e.clientY);
+    openMenu(+b.dataset.i, p.x, p.y, keyboard);
+  });
+  document.addEventListener("pointerdown", (e) => {
+    if (menu && !menu.contains(e.target)) closeMenu();
+    if (radial && !radial.classList.contains("busy") && !e.target.closest(".bubble, .center")) closeRadial();
+  }, true);
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (menu) { closeMenu(); say("Menu closed"); }
+    if (radial && !radial.classList.contains("busy")) { closeRadial(); say("Popup closed"); }
+  });
+  document.getElementById("reset-demo").addEventListener("click", reset);
+  reset();
+
+  // ---- Format explorer ----
+  const groups = [
+    ["Documents", "docx doc pdf pages odt rtf html txt md"],
+    ["Slides", "pptx key"],
+    ["Spreadsheets & data", "xlsx numbers csv tsv json"],
+    ["Images", "png jpg heic tiff gif bmp webp"],
+  ];
+  const sourcesEl = document.getElementById("sources");
+  sourcesEl.innerHTML = groups.map(([title, list]) =>
+    `<div class="source-group"><b>${title}</b><div class="chips">` +
+    list.split(" ").map((x) => `<button type="button" class="chip" data-s="${x}" aria-pressed="false" style="--tint:${F[x][2]}"><i></i>${F[x][1] === "Word 97" ? "Word 97" : F[x][1]} <span class="mono">.${x}</span></button>`).join("") +
+    `</div></div>`).join("");
+  const needsApp = { pages: "Pages", key: "Keynote", numbers: "Numbers" };
+  const notes = {
+    pdf: "Scanned PDFs are read with on-device text recognition.",
+    pptx: "PDF and image exports keep the slide design exactly when Apple’s free Keynote is installed. Without it, Easie lays out the slide text instead.",
+    key: "Keynote files need Apple’s free Keynote app. Easie uses it in the background and closes it afterwards.",
+    pages: "Pages files need Apple’s free Pages app. Easie uses it in the background and closes it afterwards.",
+    numbers: "Numbers files need Apple’s free Numbers app. Every sheet is kept.",
+    xlsx: "Every sheet is kept, and dates come out as real dates. Excel isn’t needed.",
+    json: "Lists of records become rows and columns, with the original column order.",
+  };
+  function pick(s) {
+    sourcesEl.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.s === s)));
+    document.getElementById("result-title").innerHTML = `${F[s][1]} <span>(.${s}) becomes</span>`;
+    const outs = targetsOf(s);
+    document.getElementById("outputs").innerHTML = outs.map((t, k) =>
+      `<div class="out" style="animation-delay:${k * 22}ms">${glyph(t)}<span>${F[t][1]}${needsApp[t] ? "<sup>*</sup>" : ""}</span></div>`).join("");
+    const isImage = "png jpg heic tiff gif bmp webp".includes(s);
+    let note = notes[s] || (isImage ? "Text, Word and JSON results come from on-device text recognition, so photos of documents and screenshots become editable text." : "The new file keeps headings, bold, italics, links, lists and tables where the format allows.");
+    if (outs.some((t) => needsApp[t])) note += " * Needs Apple’s free " + outs.filter((t) => needsApp[t]).map((t) => needsApp[t]).join(" or ") + " app.";
+    document.getElementById("result-note").textContent = note;
+  }
+  sourcesEl.addEventListener("click", (e) => { const c = e.target.closest(".chip"); if (c) pick(c.dataset.s); });
+  pick("docx");
+
+  // ---- Checksum copy ----
+  document.getElementById("copy-sha").addEventListener("click", async (e) => {
+    const code = document.getElementById("sha");
+    try { await navigator.clipboard.writeText(code.textContent); e.target.textContent = "Copied"; }
+    catch { const range = document.createRange(); range.selectNodeContents(code); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range); e.target.textContent = "Selected"; }
+    setTimeout(() => (e.target.textContent = "Copy"), 1600);
+  });
+})();
+</script>
