@@ -126,3 +126,7 @@ System Settings → Privacy & Security → **Open Anyway** the first time.
 - A top-level Finder menu with a submenu of formats (Finder Sync extension; needs full Xcode)
 - Settings: output folder, image quality, page size
 - Auto-updates with Sparkle
+
+## License
+
+MIT. See [LICENSE](LICENSE).
