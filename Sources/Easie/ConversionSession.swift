@@ -66,13 +66,14 @@ final class ConversionSession: ObservableObject {
                     problems.append(several ? "\(url.lastPathComponent): \(error.localizedDescription)" : error.localizedDescription)
                 }
             }
-            await Task.detached { AppleAppBridge.quitLaunchedApps() }.value
             if problems.isEmpty {
                 phase = .done(outputs)
                 onSuccess?()
             } else {
                 phase = .failed(problems.joined(separator: "\n"))
             }
+            // Close any Pages/Keynote/Numbers Easie opened, after showing the result.
+            Task.detached { AppleAppBridge.quitLaunchedApps() }
         }
     }
 

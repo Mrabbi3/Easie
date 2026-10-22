@@ -117,6 +117,7 @@ public enum AppleAppBridge {
             throw ConversionError.unsupportedTarget(Format(fileURL: input) ?? format, format)
         }
 
+        waitWhileQuitting(app)
         if NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleID).isEmpty {
             lock.withLock { _ = launchedApps.insert(app) }
         }
@@ -172,14 +173,37 @@ public enum AppleAppBridge {
         }
     }
 
-    /// Quits any iWork app Easie had to start, once a batch of conversions is done.
+    /// Quits any iWork app Easie had to start, once a batch of conversions is done, and waits
+    /// until it has really exited: an app that is still shutting down silently drops new requests.
     public static func quitLaunchedApps() {
         let apps = lock.withLock {
             defer { launchedApps.removeAll() }
             return launchedApps
         }
         for app in apps {
-            NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleID).forEach { $0.terminate() }
+            quitting.withLock { _ = $0.insert(app) }
+            let running = NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleID)
+            running.forEach { $0.terminate() }
+            waitUntilExited(running.map(\.processIdentifier))
+            quitting.withLock { _ = $0.remove(app) }
+        }
+    }
+
+    private static let quitting = Locked<Set<AppleApp>>([])
+
+    /// Polls the processes themselves (not AppKit's view of them, which needs a free main thread).
+    private static func waitUntilExited(_ pids: [pid_t], timeout: TimeInterval = 15) {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline, pids.contains(where: { kill($0, 0) == 0 }) {
+            Thread.sleep(forTimeInterval: 0.1)
+        }
+    }
+
+    /// A conversion that arrives while the app is still quitting from the previous one waits for it.
+    private static func waitWhileQuitting(_ app: AppleApp) {
+        let deadline = Date().addingTimeInterval(15)
+        while Date() < deadline, quitting.withLock({ $0.contains(app) }) {
+            Thread.sleep(forTimeInterval: 0.1)
         }
     }
 }
