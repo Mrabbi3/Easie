@@ -16,3 +16,6 @@ marketing/launch-video/launch/vo/
 marketing/launch-video/launch/vo-read/*
 !marketing/launch-video/launch/vo-read/script.txt
 marketing/launch-video/launch-vo/vo/
+
+# Launch post drafts (not for the public repo)
+marketing/launch-posts.md
