@@ -262,7 +262,21 @@ section { padding-block: 72px; border-top: 1px solid var(--line); }
 .checksum code { font-family: var(--font-mono); font-size: 0.72rem; background: var(--sunken); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; overflow-x: auto; max-width: 100%; white-space: nowrap; user-select: all; }
 .copy { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 6px; padding: 5px 10px; font: 500 0.78rem var(--font-body); cursor: pointer; }
 @media (max-width: 760px) { .download-card { grid-template-columns: minmax(0, 1fr); text-align: left; } }
-footer { padding-block: 28px 40px; color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+footer { padding-block: 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.88rem; }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 32px; }
+.foot-brand .brand { color: var(--ink); font-size: 1.2rem; }
+.foot-brand .brand svg { width: 28px; height: 28px; }
+.foot-brand p { margin-top: 12px; max-width: 34ch; }
+.dev { margin-top: 14px; color: var(--ink); }
+.dev a { font-weight: 600; text-underline-offset: 3px; }
+.foot-col h3 { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink); margin-bottom: 12px; }
+.foot-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.foot-col a { text-decoration: none; }
+.foot-col a:hover, .dev a:hover { color: var(--ink); text-decoration: underline; }
+.legal { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); display: grid; gap: 8px; font-size: 0.78rem; line-height: 1.6; }
+.legal .copyright { color: var(--ink); font-size: 0.85rem; }
+@media (max-width: 860px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
+@media (max-width: 420px) { .foot-grid { grid-template-columns: minmax(0, 1fr); } }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -467,8 +481,44 @@ footer { padding-block: 28px 40px; color: var(--muted); font-size: 0.85rem; disp
   </div>
 
   <footer>
-    <span>Easie · Free forever · Works offline</span>
-    <span>Made for macOS</span>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top" aria-label="Easie home"><svg aria-hidden="true"><use href="#easie-logo"/></svg>Easie</a>
+        <p>A free, offline file converter for macOS. No ads, no account, no uploads.</p>
+        <p class="dev">Designed and developed by <a href="https://github.com/Mrabbi3">MD Rabbi</a></p>
+      </div>
+      <nav class="foot-col" aria-label="Product">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#download-final">Download</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#formats">Formats</a></li>
+          <li><a href="https://github.com/Mrabbi3/Easie/releases">Release notes</a></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Security and privacy">
+        <h3>Security</h3>
+        <ul>
+          <li><a href="#privacy">Privacy &amp; safety</a></li>
+          <li><a href="#download-final">Verify your download</a></li>
+          <li><a href="https://github.com/Mrabbi3/Easie/blob/main/SECURITY.md">Report a security issue</a></li>
+          <li><a href="https://github.com/Mrabbi3/Easie">Source code</a></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Legal">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="https://github.com/Mrabbi3/Easie/blob/main/LICENSE">MIT License</a></li>
+          <li><a href="https://github.com/Mrabbi3/Easie/issues">Support</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="legal">
+      <p class="copyright">© 2026 MD Rabbi. All rights reserved.</p>
+      <p>Easie is free, open-source software released under the MIT License and provided “as is”, without warranty of any kind. Keep a copy of important files before converting them.</p>
+      <p>Privacy: the Easie app collects no data and never connects to the internet. This website uses no cookies, analytics or trackers; it is hosted by GitHub Pages and loads its fonts from Google Fonts.</p>
+      <p>Apple, Mac, macOS, Finder, Pages, Keynote and Numbers are trademarks of Apple Inc. Microsoft, Word, Excel and PowerPoint are trademarks of Microsoft Corporation. Easie is an independent project and is not affiliated with or endorsed by Apple or Microsoft.</p>
+    </div>
   </footer>
 </div>
 
