@@ -67,7 +67,7 @@ Builds are universal (Apple Silicon + Intel). For a faster local build use `ARCH
 - Temporary files from Pages/Keynote/Numbers exports go to a private temp folder that is deleted afterwards.
 - Diagnostics are debug-level only (not stored by macOS) and never include file contents.
 
-The public download page is https://mrabbi3.github.io/Easie/. Its source is `site/index.html`; pushing a change to it on `main` redeploys the page (`.github/workflows/pages.yml`).
+The public download page is https://mrabbi3.github.io/Easie/. Its source is `site/index.html`; `scripts/build-site.sh` builds it into `build/site`. Pushing a change to it on `main` redeploys the page on GitHub Pages (`.github/workflows/pages.yml`) and on Vercel (`vercel.json`, which also sets the security headers).
 
 Finder shows **Edit with Easie** at the bottom of the right-click menu, or under **Quick Actions** / **Services**
 when you have many. If it doesn't appear, open Easie and make sure the Right-click menu switch is on.

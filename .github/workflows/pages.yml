@@ -4,7 +4,7 @@ name: Download page
 on:
   push:
     branches: [main]
-    paths: [site/**, .github/workflows/pages.yml]
+    paths: [site/**, scripts/build-site.sh, .github/workflows/pages.yml]
   workflow_dispatch:
 
 permissions:
@@ -24,26 +24,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      # site/index.html is written without a document skeleton (it is also published as a
-      # Claude artifact, which adds one), so add the doctype, charset, viewport and a
-      # Content-Security-Policy here (Pages can't send headers): the page loads nothing but Google Fonts.
       - name: Build page
-        run: |
-          mkdir _site
-          cat - site/index.html > _site/index.html <<'HEAD'
-          <!doctype html>
-          <html lang="en">
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; base-uri 'none'; form-action 'none'">
-          <meta name="referrer" content="strict-origin-when-cross-origin">
-          <link rel="icon" type="image/png" href="icon.png">
-          <link rel="apple-touch-icon" href="icon.png">
-          HEAD
-          cp site/icon.png _site/
+        run: scripts/build-site.sh
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: build/site
       - id: deployment
         uses: actions/deploy-pages@v4
