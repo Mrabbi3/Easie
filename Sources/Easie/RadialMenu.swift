@@ -137,8 +137,8 @@ struct RadialMenu: View {
         .frame(width: RadialMenu.size(for: session.targets.count), height: RadialMenu.size(for: session.targets.count))
     }
 
-    private func angle(_ index: Int) -> Double {
-        -Double.pi / 2 + 2 * Double.pi * Double(index) / Double(max(session.targets.count, 1))
+    private func angle(_ index: Int) -> CGFloat {
+        -CGFloat.pi / 2 + 2 * CGFloat.pi * CGFloat(index) / CGFloat(max(session.targets.count, 1))
     }
 
     private func position(_ index: Int) -> CGSize {

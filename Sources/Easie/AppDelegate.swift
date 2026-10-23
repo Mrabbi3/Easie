@@ -112,7 +112,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             window.center()
             // Closing the window just tucks Easie back into the background.
             NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { _ in
-                MainActor.assumeIsolated { NSApp.setActivationPolicy(.accessory) }
+                MainActor.assumeIsolated { _ = NSApp.setActivationPolicy(.accessory) }
             }
             setupWindow = window
         }
