@@ -1,0 +1,21 @@
+name: Format or feature request
+description: A format Easie should read or write, or something it should do.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: want
+    attributes:
+      label: What would you like Easie to do?
+      placeholder: Convert EPUB to PDF.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does it matter to you?
+      description: What are you working on when you need this?
+  - type: textarea
+    id: else
+    attributes:
+      label: Anything else?
+      description: Sample files, apps that do this today, how you'd expect it to look.

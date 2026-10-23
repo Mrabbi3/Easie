@@ -1,0 +1,7 @@
+{
+  "name": "easie-launch-video",
+  "private": true,
+  "type": "module",
+  "description": "Easie launch video: a DOM motion timeline rendered frame by frame with puppeteer-core.",
+  "dependencies": { "puppeteer-core": "^25" }
+}

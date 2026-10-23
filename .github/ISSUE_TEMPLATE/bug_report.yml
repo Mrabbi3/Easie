@@ -1,0 +1,47 @@
+name: Bug report
+description: Something converted wrong, didn't appear, or crashed.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! For security problems, please use a [private report](https://github.com/Mrabbi3/Easie/security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you convert, from which format to which, and what went wrong?
+      placeholder: Right-clicked report.docx → PDF; the PDF has no images.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: easie
+    attributes:
+      label: Easie version
+      description: Shown in Finder → Applications → Easie → Get Info.
+      placeholder: "0.1.1"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: macOS 15.1, MacBook Air M2
+    validations:
+      required: true
+  - type: dropdown
+    id: iwork
+    attributes:
+      label: Are Pages, Keynote or Numbers involved?
+      options: ["No", "Yes, and they are installed", "Yes, but they are not installed"]
+  - type: textarea
+    id: sample
+    attributes:
+      label: Sample file or steps
+      description: Attach a small file that shows the problem (remove anything private first), or the exact steps.

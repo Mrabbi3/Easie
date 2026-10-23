@@ -1,0 +1,17 @@
+# Easie launch voiceover: one row per caption. "shown | spoken" fixes pronunciation (Easie = "Easy").
+# Each row is placed at its caption's time in launch.html by kit/place_vo.py, so the picture is unchanged.
+@hook1 You have a DOCX. | You have a docks.
+@hook2 They want a PDF.
+@meet Meet Easie. | Meet Easy.
+@tag The free file converter for Mac.
+@once Set it up once.
+@right Right-click.
+@pick Pick a format.
+@done Done.
+@saved Saved right next to the original.
+@f1 23 formats in. | Twenty-three formats in.
+@f2 The right one out.
+@offline Works offline.
+@noads No uploads. No ads. No account.
+@free Free.
+@end Easie. Download it free for Mac. | Easy. Download it free for Mac.

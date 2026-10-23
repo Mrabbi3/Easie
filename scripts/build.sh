@@ -2,7 +2,7 @@
 # Builds build/Easie.app. Works with just the Xcode Command Line Tools.
 #   scripts/build.sh            release build, ad-hoc signed
 #   SIGN_ID="Developer ID Application: Your Name (TEAMID)" scripts/build.sh
-#                               signed for distribution (then run scripts/notarize.sh)
+#                               signed for distribution (then notarize: see "Shipping outside the App Store" in README.md)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

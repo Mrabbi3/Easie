@@ -1,0 +1,33 @@
+# Builds Easie (universal) and runs the smoke and security tests on every push and pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: [site/**, marketing/**, docs/**, '**.md', vercel.json, .github/workflows/pages.yml]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: swift --version && sw_vers
+      - name: Build (Apple Silicon + Intel)
+        run: scripts/build.sh
+      - name: Smoke test
+        run: scripts/smoke-test.sh
+      - name: Security test
+        run: scripts/security-test.sh
+      - name: Supported formats
+        run: build/Easie.app/Contents/MacOS/Easie formats
