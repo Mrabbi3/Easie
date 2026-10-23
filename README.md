@@ -32,6 +32,8 @@
   <img src="docs/media/demo.webp" width="860" alt="Right-click Q3 Report.docx in Finder, choose Edit with Easie, pick PDF in the ring of formats, and Q3 Report.pdf appears next to the original.">
 </p>
 
+<p align="center">🎬 <a href="https://github.com/Mrabbi3/Easie/releases/download/v0.1.1/Easie-launch-video-voiced.mp4">Watch the 30-second launch video</a></p>
+
 Right-click a file in Finder → **Edit with Easie**. The file pops up with every format it can become arranged
 around it. Click one and it's done: the new file appears next to the original, and nothing is ever overwritten.
 Click elsewhere or press Esc to close the popup.
@@ -39,6 +41,7 @@ Click elsewhere or press Esc to close the popup.
 ## Contents
 
 - [Features](#features)
+- [Why Easie?](#why-easie)
 - [What converts to what](#what-converts-to-what)
 - [Install](#install)
 - [Use it](#use-it)
@@ -59,6 +62,17 @@ Click elsewhere or press Esc to close the popup.
 - **Quick.** After the first use the popup opens in about 0.2 s. The whole app is a 2 MB download.
 - **Universal.** Apple Silicon and Intel, macOS 13 Ventura or later.
 - **No dependencies.** Built only on Apple's frameworks: no packages, no bundled libraries.
+
+## Why Easie?
+
+|  | Easie | Online converters | Preview's Export |
+| --- | :---: | :---: | :---: |
+| Files stay on your Mac | ✅ | ❌ uploaded | ✅ |
+| Word, Excel, PowerPoint, Pages, Keynote | ✅ | ✅ | ❌ |
+| One right-click from Finder | ✅ | ❌ | ❌ |
+| Many files or a folder at once | ✅ | sometimes | ❌ |
+| Free, no ads, no account | ✅ | rarely | ✅ |
+| Open source | ✅ | ❌ | ❌ |
 
 ## What converts to what
 
@@ -210,20 +224,26 @@ marketing/           launch video kit
 
 ## Roadmap
 
-- PDF → PowerPoint (one slide per page) and images → PowerPoint
+- Merge several images or PDFs into one PDF ([#1](https://github.com/Mrabbi3/Easie/issues/1))
+- Split a PDF into pages ([#2](https://github.com/Mrabbi3/Easie/issues/2), good first issue)
+- Compress PDFs and resize images ([#3](https://github.com/Mrabbi3/Easie/issues/3))
+- Settings: where converted files are saved ([#4](https://github.com/Mrabbi3/Easie/issues/4)), image quality, page size
+- Easie in other languages ([#5](https://github.com/Mrabbi3/Easie/issues/5), good first issue)
+- PDF → PowerPoint, one slide per page ([#6](https://github.com/Mrabbi3/Easie/issues/6)), and images → PowerPoint
 - High-fidelity Word → PDF through Pages, as an option (keeps headers, footers and images)
-- Merge several images or PDFs into one PDF; split a PDF into pages
-- Compress PDFs and resize images
 - A top-level Finder menu with a submenu of formats (Finder Sync extension; needs full Xcode)
-- Settings: output folder, image quality, page size
-- Auto-updates with Sparkle
+- Notarized builds, a Homebrew cask, and auto-updates with Sparkle
 
-Ideas and votes are welcome in [Issues](https://github.com/Mrabbi3/Easie/issues).
+Vote with a 👍 on the issues you want most, or suggest a format in [Discussions](https://github.com/Mrabbi3/Easie/discussions).
 
 ## Contributing
 
-Bug reports, format requests and pull requests are all welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md);
-everyone taking part agrees to the [Code of Conduct](CODE_OF_CONDUCT.md).
+Bug reports, format requests and pull requests are all welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md),
+or pick a [good first issue](https://github.com/Mrabbi3/Easie/labels/good%20first%20issue). Questions and ideas go
+in [Discussions](https://github.com/Mrabbi3/Easie/discussions). Everyone taking part agrees to the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+**If Easie saves you a trip to an online converter, please ⭐ the repo.** It's the main way other Mac users find it.
 
 ## License and credits
 
